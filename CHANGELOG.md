@@ -3,6 +3,15 @@
 All notable changes to this project are documented here. The format is loosely
 based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.3.2]
+
+### Fixed
+- **No more `BrokenPipeError` tracebacks when a client hangs up.** A scanner
+  (wraith) or a browser dropping a connection mid-response is routine traffic for
+  a range, but the stdlib server was spilling a `socketserver` traceback to the
+  console each time. The server now swallows connection-reset/broken-pipe errors
+  quietly and keeps serving; any other error still surfaces.
+
 ## [0.3.1]
 
 ### Changed

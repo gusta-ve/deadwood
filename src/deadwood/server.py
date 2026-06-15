@@ -4,6 +4,7 @@ to each level's vulnerable app. Binds to loopback only unless explicitly forced.
 from __future__ import annotations
 
 import sqlite3
+import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -97,6 +98,16 @@ class _Server(ThreadingHTTPServer):
     def __init__(self, addr, world):
         self.world = world
         super().__init__(addr, _Handler)
+
+    def handle_error(self, request, client_address):
+        # A scanner — or a browser — hanging up mid-response is routine traffic
+        # for a range, not a fault. Swallow the connection-reset noise instead of
+        # spilling a socketserver traceback; anything else is a real bug, so let
+        # the default handler report it.
+        exc = sys.exc_info()[1]
+        if isinstance(exc, (BrokenPipeError, ConnectionResetError, ConnectionAbortedError)):
+            return
+        super().handle_error(request, client_address)
 
 
 def serve(host: str = "127.0.0.1", port: int = 8666, allow_unsafe: bool = False) -> None:

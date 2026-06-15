@@ -7,4 +7,4 @@ a lesson, and the source laid bare once you've earned it.
 Intentionally vulnerable. Runs on 127.0.0.1 only. Never expose it.
 """
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
