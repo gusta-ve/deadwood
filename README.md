@@ -10,6 +10,8 @@ vulnerable source and the fix.
 Dependency-free (stdlib + SQLite). Runs on **127.0.0.1 only**.
 
 [![PyPI](https://img.shields.io/pypi/v/deadwood-sec?color=ffb946&label=pypi)](https://pypi.org/project/deadwood-sec/)
+[![CI](https://github.com/gusta-ve/deadwood/actions/workflows/ci.yml/badge.svg)](https://github.com/gusta-ve/deadwood/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/gusta-ve/deadwood?color=ffb946)](https://github.com/gusta-ve/deadwood/releases)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 ![MIT](https://img.shields.io/badge/license-MIT-green)
 
@@ -22,6 +24,7 @@ Dependency-free (stdlib + SQLite). Runs on **127.0.0.1 only**.
 - [How a level works](#how-a-level-works)
 - [The levels](#the-levels)
 - [Pairing with wraith & hickok](#pairing-with-wraith--hickok)
+- [Tests](#tests)
 
 ## Install
 
@@ -68,9 +71,12 @@ with hickok/wraith:
 | 2 | Whispers | Easy | SQL injection — boolean-blind |
 | 3 | The Telegraph | Medium | SQL injection — time-based blind |
 | 4 | Back Door | Medium | OS command injection → shell |
+| 5 | The Bouncer | Medium | SQL injection — authentication bypass |
+| 6 | Sleight of Hand | Hard | UNION behind a quote/catalog filter |
+| 7 | The Cipher | Hard | Server-side template injection → RCE |
 
-*(more rooms land as the range grows — auth bypass, filtered/WAF'd injection,
-SSTI, and the Vault.)*
+*(the Brutal and Impossible rooms — a WAF'd blind injection and the Vault —
+land next.)*
 
 ## Pairing with wraith & hickok
 
@@ -83,6 +89,17 @@ hickok sql -u 'http://127.0.0.1:8666/l/first-blood/app?id=1' -p id --dump secret
 
 When a tool can't take a room, that's a bug to fix in the tool; when a room is
 too easy, that's a room to harden. They sharpen each other.
+
+## Tests
+
+```bash
+pip install -e ".[dev]" && pytest
+```
+
+The suite checks the engine (flags, registry, per-level isolation, the seeded
+world) and that each level's flaw behaves as taught. See
+[CONTRIBUTING.md](CONTRIBUTING.md) to add a room and [SECURITY.md](SECURITY.md)
+for the responsible-use policy.
 
 ## License
 

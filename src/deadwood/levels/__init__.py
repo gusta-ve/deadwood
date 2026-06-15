@@ -6,4 +6,7 @@ from deadwood.levels import (  # noqa: F401
     l02_whispers,
     l03_the_telegraph,
     l04_back_door,
+    l05_the_bouncer,
+    l06_sleight_of_hand,
+    l07_the_cipher,
 )
