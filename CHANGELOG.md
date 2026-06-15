@@ -3,6 +3,15 @@
 All notable changes to this project are documented here. The format is loosely
 based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.3.1]
+
+### Changed
+- New banner: a **dead tree** — the wood the town is named for — drawn in a
+  density ramp and lit by a vertical gold→amber gradient (bright twigs, ember
+  trunk), the companion to wraith's wraith and hickok's gunslinger. Honours
+  `NO_COLOR` and falls back to clean monochrome off a terminal; `DEADWOOD_COLOR=1`
+  forces colour. The version and tagline moved onto a single identity line.
+
 ## [0.3.0]
 
 ### Added

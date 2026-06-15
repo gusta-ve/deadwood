@@ -3,23 +3,58 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
+from pathlib import Path
 
 import deadwood.levels  # noqa: F401  (importing registers every level)
 from deadwood import __version__, flags, progress, server
 from deadwood.level import all_levels, by_slug
 
-_BANNER = r"""
-   ___              _                 _
-  / _ \___ __ _  __| |_      _____   (_)__/ /
- / // / -_) _` |/ _` \ \ /\ / / _ \ / / _  /
-/____/\__/\__,_|\__,_/\_\/\_/\___//_/\_,_/   a vulnerable range · tutorial → impossible
-"""
+# A dead tree — the wood the town is named for. Drawn in a density ramp so a
+# vertical gold→amber gradient lights it like lamplight (bright twigs, ember
+# trunk) when the terminal takes colour; it stays legible plain. Companion to
+# wraith's wraith and hickok's gunslinger.
+_ART = (Path(__file__).resolve().parent / "art" / "banner.txt").read_text(
+    encoding="utf-8").rstrip("\n").split("\n")
+_GOLD_TOP = (255, 214, 140)   # bright lamplight
+_GOLD_BOT = (150, 66, 12)     # dark amber ember
+_ACCENT = (255, 185, 70)      # the deadwood gold (matches the web shell)
+
+
+def _color_on() -> bool:
+    """Colour when stdout is a terminal and the user hasn't opted out — honours
+    the NO_COLOR convention, with DEADWOOD_COLOR=1 to force it on (e.g. piped)."""
+    if os.environ.get("DEADWOOD_COLOR") == "1":
+        return True
+    if os.environ.get("NO_COLOR") is not None:
+        return False
+    return sys.stdout.isatty()
+
+
+def _fg(rgb) -> str:
+    return f"\033[38;2;{rgb[0]};{rgb[1]};{rgb[2]}m"
+
+
+def _lerp(a, b, t):
+    return tuple(round(a[i] + (b[i] - a[i]) * t) for i in range(3))
 
 
 def _print_banner():
-    print(_BANNER.rstrip("\n"))
-    print(f"  v{__version__} · the practice town for wraith & hickok\n")
+    color = _color_on()
+    reset, bold, dim = ("\033[0m", "\033[1m", "\033[2m") if color else ("", "", "")
+    print()
+    n = len(_ART)
+    for i, line in enumerate(_ART):
+        if color:
+            print("  " + bold + _fg(_lerp(_GOLD_TOP, _GOLD_BOT, i / (n - 1))) + line + reset)
+        else:
+            print("  " + line)
+    accent = bold + _fg(_ACCENT) if color else ""
+    print()
+    print(f"  {accent}deadwood{reset}{dim}  ·  a vulnerable range · tutorial → impossible{reset}"
+          f"   {dim}v{__version__}{reset}")
+    print(f"  {dim}the practice town for wraith & hickok · localhost only{reset}\n")
 
 
 def cmd_serve(args):
