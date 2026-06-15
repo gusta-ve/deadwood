@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deadwood-sec"
+dynamic = ["version"]
+description = "A self-hosted web-security range, leveled tutorial-to-impossible — the practice town for wraith and hickok."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "gusta-ve" }]
+keywords = [
+    "security", "ctf", "training", "education", "pentest", "appsec",
+    "sql-injection", "command-injection", "vulnerable", "range", "lab",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Security",
+    "Topic :: Education",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+deadwood = "deadwood.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/gusta-ve/deadwood"
+Source = "https://github.com/gusta-ve/deadwood"
+Changelog = "https://github.com/gusta-ve/deadwood/blob/main/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "src/deadwood/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/deadwood"]
