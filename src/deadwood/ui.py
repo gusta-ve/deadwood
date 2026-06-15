@@ -24,8 +24,19 @@ button{color:var(--gold);cursor:pointer}button:hover{border-color:var(--gold)}
 pre{background:#0a0805;border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow:auto;color:#cdbf9f}
 .tier{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--dim)}
 .warn{border-color:#5a2418;background:#1d0f0a;color:#f0b6a6}
-.lvl{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:11px 2px}
+.lvl{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:12px 8px;border-radius:8px}
 .lvl:last-child{border-bottom:0}
+.lvl:hover{background:#1b160e}
+.num{color:var(--dim);font-variant-numeric:tabular-nums;margin-right:6px}
+.tier.t-tutorial{color:#7bbf6a;border-color:#2f4a28}
+.tier.t-easy{color:#5bb3a6;border-color:#234a44}
+.tier.t-medium{color:#ffb946;border-color:#4a3a18}
+.tier.t-hard{color:#e58a3c;border-color:#4a3018}
+.tier.t-brutal{color:#e2543c;border-color:#4a1f18}
+.tier.t-impossible{color:#c77dff;border-color:#3a2a4a}
+.bar{height:9px;background:#120d08;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:8px 0 4px}
+.bar>span{display:block;height:100%;background:linear-gradient(90deg,#96541e,#ffb946)}
+.taken{color:var(--ok)}
 footer{color:var(--dim);font-size:12px;text-align:center;padding:26px}
 """
 

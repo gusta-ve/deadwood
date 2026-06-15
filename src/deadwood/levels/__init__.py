@@ -9,4 +9,6 @@ from deadwood.levels import (  # noqa: F401
     l05_the_bouncer,
     l06_sleight_of_hand,
     l07_the_cipher,
+    l08_dead_mans_hand,
+    l09_the_vault,
 )

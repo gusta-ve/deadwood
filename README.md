@@ -74,9 +74,8 @@ with hickok/wraith:
 | 5 | The Bouncer | Medium | SQL injection — authentication bypass |
 | 6 | Sleight of Hand | Hard | UNION behind a quote/catalog filter |
 | 7 | The Cipher | Hard | Server-side template injection → RCE |
-
-*(the Brutal and Impossible rooms — a WAF'd blind injection and the Vault —
-land next.)*
+| 8 | Dead Man's Hand | Brutal | Blind injection behind a WAF denylist |
+| 9 | The Vault | Impossible | Second-order (stored) SQL injection |
 
 ## Pairing with wraith & hickok
 

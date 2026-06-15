@@ -3,6 +3,19 @@
 All notable changes to this project are documented here. The format is loosely
 based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.3.0]
+
+### Added
+- The final two rooms: **Dead Man's Hand** (Brutal — boolean-blind injection
+  behind a WAF that strips quotes, blocks the catalog and blocks UNION with a
+  third-state page) and **The Vault** (Impossible — second-order / stored SQL
+  injection: input stored safely, then used unescaped on another query). The
+  range is now nine rooms, Tutorial → Impossible.
+
+### Changed
+- The web UI got a pass: a progress bar on the town map, tier-coloured difficulty
+  badges (Tutorial → Impossible), and tidier level rows.
+
 ## [0.2.0]
 
 ### Added

