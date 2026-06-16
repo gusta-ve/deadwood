@@ -15,8 +15,11 @@ from deadwood.level import all_levels, by_slug
 # vertical gold→amber gradient lights it like lamplight (bright twigs, ember
 # trunk) when the terminal takes colour; it stays legible plain. Companion to
 # wraith's wraith and hickok's gunslinger.
-_ART = (Path(__file__).resolve().parent / "art" / "banner.txt").read_text(
-    encoding="utf-8").rstrip("\n").split("\n")
+try:
+    _ART = (Path(__file__).resolve().parent / "art" / "banner.txt").read_text(
+        encoding="utf-8").rstrip("\n").split("\n")
+except OSError:
+    _ART = ["deadwood"]              # a missing asset shouldn't take the whole CLI down
 _GOLD_TOP = (255, 214, 140)   # bright lamplight
 _GOLD_BOT = (150, 66, 12)     # dark amber ember
 _ACCENT = (255, 185, 70)      # the deadwood gold (matches the web shell)
@@ -62,7 +65,7 @@ def cmd_serve(args):
     sv = progress.solved()
     print(f"  map      http://{args.host}:{args.port}/")
     print(f"  levels   {len(all_levels())} loaded · {len(sv)} taken")
-    print(f"  warning  intentionally vulnerable — keep it on localhost, never expose it")
+    print("  warning  intentionally vulnerable — keep it on localhost, never expose it")
     print("\n  Ctrl-C to stop the range.\n")
     try:
         server.serve(args.host, args.port, allow_unsafe=args.unsafe)

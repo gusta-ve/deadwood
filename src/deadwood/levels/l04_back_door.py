@@ -40,7 +40,12 @@ class BackDoor(Level):
 
     def handle(self, req: Request, db) -> Response:
         host = req.query.get("host", "127.0.0.1")
-        env = {**os.environ, "DEADWOOD_FLAG": self.flag()}
+        # Hand the shell a clean env: keep the OS environment but drop any other
+        # level's DEADWOOD_* flag (The Cipher seeds DEADWOOD_CIPHER into os.environ),
+        # so command injection here can't shortcut a sibling room. This level's own
+        # flag is the only DEADWOOD_* the shell should ever see.
+        env = {k: v for k, v in os.environ.items() if not k.startswith("DEADWOOD_")}
+        env["DEADWOOD_FLAG"] = self.flag()
         try:
             out = subprocess.run(f"ping -c1 -W1 {host}", shell=True, capture_output=True,
                                  timeout=15, env=env).stdout.decode("utf-8", "replace")

@@ -58,6 +58,15 @@ def test_back_door_command_injection_leaks_the_flag(monkeypatch, tmp_path):
     assert lv.flag().encode() in out
 
 
+def test_back_door_does_not_leak_sibling_flags(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    cipher, bd = by_slug("the-cipher"), by_slug("back-door")
+    _db_for(cipher)                                  # The Cipher's seed() puts DEADWOOD_CIPHER in os.environ
+    out = bd.handle(_req({"host": "x; env"}), _db_for(bd)).body
+    assert bd.flag().encode() in out                 # its own flag is still reachable
+    assert cipher.flag().encode() not in out         # but a sibling room's flag must not leak through
+
+
 def test_the_bouncer_auth_bypass(monkeypatch, tmp_path):
     monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
     lv = by_slug("the-bouncer")

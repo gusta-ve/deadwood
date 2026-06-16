@@ -11,7 +11,12 @@ import hashlib
 import hmac
 import os
 import secrets
+import sys
 from pathlib import Path
+
+# Read once per process: the secret stays stable for the run even if the data dir
+# is unwritable, and we never re-warn or re-mint on every flag() call.
+_secret_cache: bytes | None = None
 
 
 def state_dir() -> Path:
@@ -20,17 +25,24 @@ def state_dir() -> Path:
 
 
 def _secret() -> bytes:
+    global _secret_cache
+    if _secret_cache is not None:
+        return _secret_cache
     p = state_dir() / "secret"
     try:
-        return p.read_bytes()
+        s = p.read_bytes()
     except OSError:
-        p.parent.mkdir(parents=True, exist_ok=True)
+        s = b""
+    if not s:                                   # missing, empty, or unreadable — mint a fresh one
         s = secrets.token_bytes(32)
         try:
+            p.parent.mkdir(parents=True, exist_ok=True)
             p.write_bytes(s)
-        except OSError:
-            pass
-        return s
+        except OSError as exc:                   # can't persist → flags differ run-to-run; say so
+            print(f"deadwood: warning — can't persist the flag secret ({exc}); "
+                  "flags won't be stable across runs.", file=sys.stderr)
+    _secret_cache = s
+    return s
 
 
 def flag(slug: str) -> str:

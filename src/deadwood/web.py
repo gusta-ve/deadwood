@@ -62,7 +62,7 @@ def briefing(lv: Level, req: Request) -> Response:
     except ValueError:
         n_hints = 0
     show_src = req.query.get("source") == "1"
-    keep = f"&source=1" if show_src else ""
+    keep = "&source=1" if show_src else ""
 
     parts = [
         f'<h1>{lv.num:02d} · {html.escape(lv.title)} {_tier(lv)}</h1>',

@@ -3,6 +3,25 @@
 All notable changes to this project are documented here. The format is loosely
 based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.3.3]
+
+### Fixed
+- **Back Door no longer leaks The Cipher's flag.** The Cipher seeds its flag into
+  the process environment (`DEADWOOD_CIPHER`); Back Door ran its shell with the
+  whole environment, so `host=…; env` in a Medium room handed you a Hard room's
+  flag with no SSTI at all. Back Door now scrubs every *other* room's `DEADWOOD_*`
+  from the shell environment, keeping only its own — per-room isolation holds.
+- **The per-install flag secret is read once and fails loud.** A missing or empty
+  secret file is regenerated correctly, and if it can't be persisted deadwood now
+  warns instead of silently minting a fresh, ungradable flag on every call.
+
+### Changed
+- **Per-room database locks.** Each level's in-memory database gets its own lock
+  rather than sharing one global lock, so a long-running injection in one room (a
+  capped `sleep`, a slow diagnostics ping) no longer freezes the whole range.
+- A missing banner asset degrades to a plain wordmark instead of taking down the
+  entire CLI at import time.
+
 ## [0.3.2]
 
 ### Fixed

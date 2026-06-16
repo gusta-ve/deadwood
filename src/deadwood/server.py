@@ -17,23 +17,27 @@ _LOOPBACK = {"127.0.0.1", "localhost", "::1", ""}
 class World:
     """One in-memory company database **per level**, so taking one room never leaks
     another's secrets. Each db has the full company world plus that level's own
-    seed. A single lock serializes access (fine for a local range)."""
+    seed, and its own lock — a request holds only its room's lock, so a slow
+    injection in one room (a capped sleep, a long ping) never freezes the rest."""
 
     def __init__(self):
-        self.lock = threading.Lock()
         self.dbs: dict[str, sqlite3.Connection] = {}
+        self.locks: dict[str, threading.Lock] = {}
         self.build()
 
     def build(self) -> None:
-        with self.lock:
-            for lv in all_levels():
-                db = sqlite3.connect(":memory:", check_same_thread=False)
-                data.build(db)
-                lv.seed(db)
-                self.dbs[lv.slug] = db
+        for lv in all_levels():
+            db = sqlite3.connect(":memory:", check_same_thread=False)
+            data.build(db)
+            lv.seed(db)
+            self.dbs[lv.slug] = db
+            self.locks[lv.slug] = threading.Lock()
 
     def db_for(self, slug: str) -> sqlite3.Connection:
         return self.dbs[slug]
+
+    def lock_for(self, slug: str) -> threading.Lock:
+        return self.locks[slug]
 
 
 def _read_request(h: BaseHTTPRequestHandler) -> Request:
@@ -65,8 +69,9 @@ class _Handler(BaseHTTPRequestHandler):
                 return web.briefing(lv, req)
             if parts[2] == "app":
                 req.subpath = "/" + "/".join(parts[3:])
-                with self.server.world.lock:
-                    return lv.handle(req, self.server.world.db_for(lv.slug))
+                world = self.server.world
+                with world.lock_for(lv.slug):
+                    return lv.handle(req, world.db_for(lv.slug))
             if parts[2] == "flag" and req.method == "POST":
                 return web.submit_flag(lv, req)
         return _not_found()
