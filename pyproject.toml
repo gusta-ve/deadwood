@@ -25,7 +25,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "ruff"]
 
 [project.scripts]
 deadwood = "deadwood.cli:main"
@@ -40,3 +40,10 @@ path = "src/deadwood/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/deadwood"]
+
+[tool.ruff.lint]
+# F-codes only (pyflakes): unused imports, f-strings with no placeholders,
+# undefined names — real mistakes. Security and style rule sets stay off on
+# purpose: the rooms are intentionally vulnerable (eval, shell=True, SQL built by
+# f-string, long lines), so those rules would be nothing but false positives.
+select = ["F"]

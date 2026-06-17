@@ -10,4 +10,4 @@ serve:
 	deadwood serve
 
 lint:
-	python -m compileall -q src
+	ruff check src tests

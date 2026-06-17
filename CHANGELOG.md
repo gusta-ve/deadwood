@@ -3,6 +3,16 @@
 All notable changes to this project are documented here. The format is loosely
 based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.3.4]
+
+### Added
+- **`make lint` (and a CI lint step) now run ruff** over `src` and `tests`,
+  restricted to the pyflakes F-rules — unused imports, f-strings with no
+  placeholders, undefined names. Security and style rule sets stay off by design:
+  the rooms are intentionally vulnerable and those rules would be all false
+  positives. This is the check that catches the kind of dead f-string tidied up
+  in 0.3.3.
+
 ## [0.3.3]
 
 ### Fixed
