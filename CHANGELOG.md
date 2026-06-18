@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. The format is loosely
 based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.5.1]
+
+### Fixed
+- Two company-wide secrets (`smtp_relay`, `backup_passphrase`) were seeded both in the
+  shared world and again inside a level's own `seed`, so they appeared twice when that
+  room's `secrets` table was dumped. The levels keep only their own flag now.
+
 ## [0.5.0]
 
 The range becomes a target you can take whole. On top of the leveled rooms, deadwood

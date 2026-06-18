@@ -36,9 +36,7 @@ class FirstBlood(Level):
 
     def seed(self, db):
         db.execute("INSERT INTO secrets (label, value) VALUES (?,?)", ("first-blood", self.flag()))
-        db.execute("INSERT INTO secrets (label, value) VALUES (?,?)",
-                   ("smtp_relay", "telegraph:hunter2@relay.deadwood-trust.example"))
-        db.commit()
+        db.commit()   # smtp_relay & co. are seeded company-wide in data.build now
 
     def handle(self, req: Request, db) -> Response:
         idv = req.query.get("id", "1")

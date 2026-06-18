@@ -44,9 +44,7 @@ class SleightOfHand(Level):
 
     def seed(self, db):
         db.execute("INSERT INTO secrets (label, value) VALUES (?,?)", ("sleight-of-hand", self.flag()))
-        db.execute("INSERT INTO secrets (label, value) VALUES (?,?)",
-                   ("backup_passphrase", "wagons-roll-at-dawn"))
-        db.commit()
+        db.commit()   # backup_passphrase & co. are seeded company-wide in data.build now
 
     def handle(self, req: Request, db) -> Response:
         raw = req.query.get("id", "1")
