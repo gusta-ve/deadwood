@@ -14,7 +14,7 @@ from urllib.parse import parse_qs, urlsplit
 from deadwood import flags
 
 # Difficulty tiers, easiest first (used for ordering and the town map).
-TIERS = ["Tutorial", "Easy", "Medium", "Hard", "Brutal", "Impossible"]
+TIERS = ["Tutorial", "Easy", "Medium", "Hard", "Brutal", "Impossible", "Endgame"]
 
 
 class Request:

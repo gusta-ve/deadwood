@@ -1,0 +1,17 @@
+{
+  "_comment": "Sessions for wraith's access-control phase against deadwood's capstone, The Whole Hand. Run: wraith 127.0.0.1:8666 --sessions examples/deadwood_sessions.json. The tokens are the fixed, role-tagged sessions the app seeds (and the same ones a SQLi dump of the sessions table would reveal).",
+  "base_url": "http://127.0.0.1:8666",
+  "seeds": [
+    "/l/the-whole-hand/app",
+    "/l/the-whole-hand/app/account",
+    "/l/the-whole-hand/app/orders/3",
+    "/l/the-whole-hand/app/admin",
+    "/l/the-whole-hand/app/admin-secure"
+  ],
+  "sessions": [
+    { "name": "admin",   "role": "high", "cookies": { "session": "dw-admin-7f3a9c1e" } },
+    { "name": "manager", "role": "med",  "cookies": { "session": "dw-mgr-2b8e1d4a" } },
+    { "name": "teller",  "role": "low",  "cookies": { "session": "dw-teller-44c0a1b9" } },
+    { "name": "anon",    "role": "none" }
+  ]
+}

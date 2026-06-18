@@ -58,9 +58,16 @@ class _Handler(BaseHTTPRequestHandler):
         pass
 
     def _route(self, req: Request) -> Response:
+        # vhost: a recognised internal hostname serves a different (internal) site
+        host = (req.headers.get("Host", "") or "").split(":")[0].lower() if req.headers else ""
+        if host not in web.DEFAULT_HOSTS and web.is_internal_vhost(host):
+            return web.vhost_page()
         parts = [p for p in req.route.split("/") if p]
         if not parts:
             return web.town_map()
+        sens = web.sensitive_path(req.route)            # exposed files: .git/config, backup.sql, .env
+        if sens is not None:
+            return sens
         if parts[0] == "l" and len(parts) >= 2:
             lv = by_slug(parts[1])
             if lv is None:
@@ -74,7 +81,8 @@ class _Handler(BaseHTTPRequestHandler):
                     return lv.handle(req, world.db_for(lv.slug))
             if parts[2] == "flag" and req.method == "POST":
                 return web.submit_flag(lv, req)
-        return _not_found()
+            return _not_found()
+        return web.soft_404()                           # 200 soft-404 — noise to calibrate against
 
     def _dispatch(self):
         req = _read_request(self)

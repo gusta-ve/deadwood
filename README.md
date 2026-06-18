@@ -69,22 +69,41 @@ with hickok/wraith:
 |---|------|------|--------|
 | 1 | First Blood | Tutorial | SQL injection — UNION (in-band) |
 | 2 | Whispers | Easy | SQL injection — boolean-blind |
-| 3 | The Telegraph | Medium | SQL injection — time-based blind |
-| 4 | Back Door | Medium | OS command injection → shell |
-| 5 | The Bouncer | Medium | SQL injection — authentication bypass |
-| 6 | Sleight of Hand | Hard | UNION behind a quote/catalog filter |
-| 7 | The Cipher | Hard | Server-side template injection → RCE |
-| 8 | Dead Man's Hand | Brutal | Blind injection behind a WAF denylist |
-| 9 | The Vault | Impossible | Second-order (stored) SQL injection |
+| 3 | The Ledger | Easy | SQL injection — error-based (extractvalue, 32-char windows) |
+| 4 | The Strongbox | Medium | SQL injection — UNION (double-quote context) |
+| 5 | The Telegraph | Medium | SQL injection — time-based blind |
+| 6 | The Bouncer | Medium | SQL injection — authentication bypass |
+| 7 | Back Door | Medium | OS command injection → shell |
+| 8 | The Watchman | Hard | SQL injection — time-based (parenthesised `func('…')` context) |
+| 9 | Sleight of Hand | Hard | UNION behind a quote/catalog filter |
+| 10 | The Gauntlet | Hard | UNION behind a keyword WAF (case/comment evasion) |
+| 11 | The Cipher | Hard | Server-side template injection → RCE |
+| 12 | The Annex | Brutal | SQL injection — cross-database (ATTACH) |
+| 13 | Dead Man's Hand | Brutal | Blind injection behind a WAF denylist |
+| 14 | The Vault | Impossible | Second-order (stored) SQL injection |
+| 15 | The Whole Hand | Endgame | Full chain — recon → SQLi → session pivot → BAC → the vault |
+
+The world behind the rooms is deliberately the edge-case data a real dump hits, not
+a toy table: **NULL** cells that drop rows from a naive dump, a `group_concat`
+**capped at 1024 bytes** like MySQL, values **longer than 32 chars**, **unicode**,
+and a second **ATTACHed database**. That's where a tool's real bugs show up.
 
 ## Pairing with wraith & hickok
 
-deadwood is the range the tools grew up on. A typical run:
+deadwood is the range the tools grew up on. Scout the whole town, then take it:
 
 ```bash
-deadwood serve &                                   # the town
+deadwood serve &                                                  # the town
+wraith 127.0.0.1:8666 --sessions examples/deadwood_sessions.json  # recon the whole surface
 hickok sql -u 'http://127.0.0.1:8666/l/first-blood/app?id=1' -p id --dump secrets
 ```
+
+**The Whole Hand** (room 15) is the live company app, end to end: recon it with
+wraith — it lights the IDOR, the broken access control, the XSS, the open redirect,
+the reflective CORS, the missing headers and the injectable directory — then dump the
+sessions table with hickok, ride a live **admin** token to the vault. SQLi → a real
+credential → broken access control → the house's deepest secret. A genuine
+discovery, on the one target that's yours.
 
 When a tool can't take a room, that's a bug to fix in the tool; when a room is
 too easy, that's a room to harden. They sharpen each other.

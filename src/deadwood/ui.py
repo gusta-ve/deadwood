@@ -34,6 +34,7 @@ pre{background:#0a0805;border:1px solid var(--line);border-radius:8px;padding:12
 .tier.t-hard{color:#e58a3c;border-color:#4a3018}
 .tier.t-brutal{color:#e2543c;border-color:#4a1f18}
 .tier.t-impossible{color:#c77dff;border-color:#3a2a4a}
+.tier.t-endgame{color:#ffd700;border-color:#5a4a18;background:#1a1408}
 .bar{height:9px;background:#120d08;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:8px 0 4px}
 .bar>span{display:block;height:100%;background:linear-gradient(90deg,#96541e,#ffb946)}
 .taken{color:var(--ok)}

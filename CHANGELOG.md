@@ -3,6 +3,29 @@
 All notable changes to this project are documented here. The format is loosely
 based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.5.0]
+
+The range becomes a target you can take whole. On top of the leveled rooms, deadwood
+now serves the **live company app** with the full recon surface, and a capstone heist
+that chains the rooms into one real conquest.
+
+### Added
+- **The Whole Hand** (room 15, the **Endgame**) — the live Deadwood Trust web app in
+  one crawlable target: a real login and sessions, broken access control (`/admin`
+  checks login, not role), IDOR (`/orders/<id>`), reflected XSS, an open redirect,
+  reflective CORS, an insecure tracking cookie, missing security headers, and a
+  UNION-injectable staff directory. The heist: SQLi the directory → dump the live
+  **sessions** table → ride an **admin** token to the vault → the flag. SQLi → a real
+  credential → broken access control → the prize, on the one target that's yours.
+- **A wider recon surface**, server-wide: a virtual host that serves an internal
+  site, exposed files (`/.git/config`, `/backup.sql`, `/.env`), and a **soft-404**
+  (200 on missing paths) so a content scanner has to calibrate its noise.
+- `examples/deadwood_sessions.json` — drop-in sessions for wraith's access-control
+  phase (`wraith 127.0.0.1:8666 --sessions examples/deadwood_sessions.json`).
+
+### Changed
+- A new `Endgame` tier for the capstone (fifteen rooms now, Tutorial → Endgame).
+
 ## [0.4.0]
 
 The range grew up. Nine focused rooms became fourteen, and the world behind them is

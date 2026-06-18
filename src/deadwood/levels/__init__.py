@@ -16,4 +16,5 @@ from deadwood.levels import (  # noqa: F401
     l_the_ledger,
     l_the_strongbox,
     l_the_watchman,
+    l_the_whole_hand,
 )

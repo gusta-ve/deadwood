@@ -101,6 +101,55 @@ def briefing(lv: Level, req: Request) -> Response:
     return Response(ui.shell(lv.title, "".join(parts)))
 
 
+# --- the wider surface: things a recon pass (wraith) should light up beyond the
+# levels — exposed files, a virtual host, and a soft-404 to calibrate noise against.
+
+# Sensitive paths that shouldn't be reachable but are (content discovery).
+_SENSITIVE = {
+    "/.git/config": ("text/plain; charset=utf-8",
+                     "[core]\n\trepositoryformatversion = 0\n\tbare = false\n"
+                     '[remote "origin"]\n\turl = git@github.com:deadwood-trust/ledger.git\n'),
+    "/backup.sql": ("text/plain; charset=utf-8",
+                    "-- Deadwood Trust — nightly dump (DO NOT SHIP)\n"
+                    "INSERT INTO employees(username,pw_md5) VALUES('admin','5f4dcc3b5aa765d61d8327deb882cf99');\n"
+                    "-- … 8MB truncated …\n"),
+    "/.env": ("text/plain; charset=utf-8",
+              "DB_PASSWORD=goldrush\nSESSION_SECRET=dead-mans-hand\n"
+              "SMTP_RELAY=telegraph:hunter2@relay.deadwood-trust.example\n"),
+}
+
+# Bare hostnames that serve an internal site instead of the public floor (vhost).
+_INTERNAL_VHOSTS = {"internal", "staging", "vault", "ops", "dev", "admin", "backup"}
+DEFAULT_HOSTS = {"127.0.0.1", "localhost", "::1", ""}
+
+
+def sensitive_path(route: str) -> Response | None:
+    hit = _SENSITIVE.get(route)
+    if hit is None:
+        return None
+    return Response(hit[1], content_type=hit[0])
+
+
+def is_internal_vhost(host: str) -> bool:
+    return host.split(".")[0] in _INTERNAL_VHOSTS
+
+
+def vhost_page() -> Response:
+    return Response(ui.shell("Internal", '<h1>Deadwood Trust — Internal Ops</h1>'
+                             '<p class="dim">staging mirror · not for the public floor</p>'
+                             '<div class="panel">DB console, payroll exports and the vault log live '
+                             'behind this name. If you can read this, the vhost is exposed.</div>',
+                             subtitle="internal — not for the public floor"))
+
+
+def soft_404() -> Response:
+    # 200, not 404 — a soft-404, so a content scanner has to calibrate the "missing"
+    # page by its body and tell real hits apart from the noise.
+    return Response(ui.shell("not found", '<h1>No such page</h1>'
+                             '<p class="dim">The trail ends here. Back to the '
+                             '<a href="/">town map</a>.</p>'))
+
+
 def submit_flag(lv: Level, req: Request) -> Response:
     data = parse_qs(req.body.decode("utf-8", "replace"))
     value = (data.get("flag") or [""])[0]

