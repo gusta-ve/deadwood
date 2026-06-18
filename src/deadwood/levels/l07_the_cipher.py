@@ -16,7 +16,7 @@ _EXPR = re.compile(r"\{\{(.+?)\}\}")
 
 @register
 class TheCipher(Level):
-    num = 7
+    num = 11
     slug = "the-cipher"
     title = "The Cipher"
     tier = "Hard"

@@ -11,7 +11,7 @@ from deadwood.level import Level, Request, Response, register
 
 @register
 class TheVault(Level):
-    num = 9
+    num = 14
     slug = "the-vault"
     title = "The Vault"
     tier = "Impossible"

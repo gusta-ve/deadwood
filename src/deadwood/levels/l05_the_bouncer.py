@@ -11,7 +11,7 @@ from deadwood.level import Level, Request, Response, register
 
 @register
 class TheBouncer(Level):
-    num = 5
+    num = 6
     slug = "the-bouncer"
     title = "The Bouncer"
     tier = "Medium"

@@ -13,7 +13,7 @@ _BLOCKED = ("sqlite_master", "information_schema", "pragma")
 
 @register
 class SleightOfHand(Level):
-    num = 6
+    num = 9
     slug = "sleight-of-hand"
     title = "Sleight of Hand"
     tier = "Hard"

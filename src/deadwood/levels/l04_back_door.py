@@ -13,7 +13,7 @@ from deadwood.level import Level, Request, Response, register
 
 @register
 class BackDoor(Level):
-    num = 4
+    num = 7
     slug = "back-door"
     title = "Back Door"
     tier = "Medium"

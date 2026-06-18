@@ -14,7 +14,7 @@ _DENY = ("union", "sqlite_master", "information_schema", "pragma")
 
 @register
 class DeadMansHand(Level):
-    num = 8
+    num = 13
     slug = "dead-mans-hand"
     title = "Dead Man's Hand"
     tier = "Brutal"

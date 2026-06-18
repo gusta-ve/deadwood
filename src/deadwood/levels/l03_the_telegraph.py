@@ -11,7 +11,7 @@ from deadwood.level import Level, Request, Response, register
 
 @register
 class TheTelegraph(Level):
-    num = 3
+    num = 5
     slug = "the-telegraph"
     title = "The Telegraph"
     tier = "Medium"

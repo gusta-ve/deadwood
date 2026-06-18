@@ -11,4 +11,9 @@ from deadwood.levels import (  # noqa: F401
     l07_the_cipher,
     l08_dead_mans_hand,
     l09_the_vault,
+    l_the_annex,
+    l_the_gauntlet,
+    l_the_ledger,
+    l_the_strongbox,
+    l_the_watchman,
 )

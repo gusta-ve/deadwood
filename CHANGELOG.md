@@ -3,6 +3,36 @@
 All notable changes to this project are documented here. The format is loosely
 based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.4.0]
+
+The range grew up. Nine focused rooms became fourteen, and the world behind them is
+now the edge-case-rich data a *real* dump hits — so a tool walked over deadwood meets
+the bugs a small lab hides (NULL coalescing, group_concat truncation, error-window
+chunking, context detection, cross-database reach).
+
+### Added
+- **An edge-case world.** The company database now carries NULL cells in dumpable
+  tables, values longer than 32 chars, tables over 1024 bytes, unicode / accented
+  data, live staff sessions and API keys, and a second **ATTACHed database**
+  (`archive`) — a cross-database surface.
+- **`group_concat` modelled on MySQL** (skip NULLs, cap the result at 1024 bytes),
+  and a MySQL-style NULL-propagating `concat`. A whole-table dump on this SQLite
+  range now hits the same two bugs a real one does: a row with a NULL cell silently
+  vanishes, and a table past the cap truncates mid-dump with no error.
+- **Five new rooms**, each a distinct technique / injection context:
+  - **The Ledger** — error-based: a verbose MySQL error is the read channel, with the
+    real ~32-char `extractvalue` truncation, so a long value must be read in windows
+    and reassembled.
+  - **The Strongbox** — UNION in a double-quote string context.
+  - **The Watchman** — time-based blind in a parenthesised `func('…')` context (the
+    `')` breakout).
+  - **The Gauntlet** — UNION behind a keyword WAF: case-folding / inline-comment
+    evasion, quote-free literals.
+  - **The Annex** — cross-database: the flag lives in the ATTACHed `archive`.
+
+### Changed
+- The rooms are renumbered into one escalating run, Tutorial → Impossible (fourteen).
+
 ## [0.3.4]
 
 ### Added
