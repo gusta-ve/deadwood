@@ -122,7 +122,7 @@ def test_the_vault_second_order_injection(monkeypatch, tmp_path):
 
 def test_the_ledger_error_based_32char_windows(monkeypatch, tmp_path):
     monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
-    from deadwood.levels.l_the_ledger import xpath_leak
+    from deadwood.levels.l03_the_ledger import xpath_leak
     lv = by_slug("the-ledger")
     db = _db_for(lv)
     expr = "(SELECT value FROM secrets WHERE label='the-ledger')"

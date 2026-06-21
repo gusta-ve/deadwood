@@ -3,6 +3,21 @@
 All notable changes to this project are documented here. The format is loosely
 based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.5.2]
+
+Housekeeping — no behaviour change.
+
+### Changed
+- **Level files are renamed to match their actual order.** After the 0.4–0.5
+  renumbering, the on-disk prefixes had drifted (`l03_the_telegraph.py` was
+  room 5, six newer rooms had no number at all). Every level module is now
+  `lNN_<slug>.py` in play order, so the directory reads top-to-bottom like the
+  range itself.
+- The README gains a **Take your first flag** walkthrough — the full
+  find → read → submit loop on room 1 — and its level table and tiers track the
+  current fifteen rooms (Tutorial → Endgame).
+- `.ruff_cache/` is git-ignored.
+
 ## [0.5.1]
 
 ### Fixed
