@@ -1,4 +1,4 @@
-"""Level — The Ledger. Error-based SQL injection: a verbose MySQL error is the read
+"""Level 3 — The Ledger. Error-based SQL injection: a verbose MySQL error is the read
 channel, and (like the real thing) `extractvalue`/`updatexml` truncate the leak at
 ~32 characters — so a value longer than that has to be read in windows and
 reassembled. Models MySQL on a SQLite backend (the range is self-contained)."""

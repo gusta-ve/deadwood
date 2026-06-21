@@ -3,6 +3,19 @@
 All notable changes to this project are documented here. The format is loosely
 based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.5.3]
+
+Follow-up to the 0.5.2 housekeeping — fixes two things that pass left behind.
+
+### Fixed
+- **The README's first-flag demo now actually runs.** The `curl` line carried
+  literal spaces in the URL, which curl rejects (`HTTP 000`); it uses
+  `-G --data-urlencode` now — copy-paste-able, and the SQL stays readable.
+- **Every level's docstring number matches its place in the range.** The 0.4–0.5
+  renumbering had left thirteen of them stale (`l05_the_telegraph.py` opened
+  "Level 3 —") or blank ("Level — …"); each now reads "Level N —" with the same
+  N the registry sorts by.
+
 ## [0.5.2]
 
 Housekeeping — no behaviour change.

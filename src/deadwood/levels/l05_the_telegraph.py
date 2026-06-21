@@ -1,4 +1,4 @@
-"""Level 3 — The Telegraph. Time-based blind SQL injection: the page never changes,
+"""Level 5 — The Telegraph. Time-based blind SQL injection: the page never changes,
 only the clock does."""
 
 from __future__ import annotations

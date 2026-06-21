@@ -1,4 +1,4 @@
-"""Level 8 — Dead Man's Hand. Boolean-blind SQL injection behind a WAF denylist:
+"""Level 13 — Dead Man's Hand. Boolean-blind SQL injection behind a WAF denylist:
 a quote filter, a blocked catalog, and a block page that is neither true nor false."""
 
 from __future__ import annotations

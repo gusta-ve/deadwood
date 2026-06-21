@@ -1,4 +1,4 @@
-"""Level — The Whole Hand. The capstone: the **live Deadwood Trust web app**, with the
+"""Level 15 — The Whole Hand. The capstone: the **live Deadwood Trust web app**, with the
 whole wraith surface in one crawlable target, and a heist you finish by chaining the
 rooms together into one real conquest.
 

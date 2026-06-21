@@ -1,4 +1,4 @@
-"""Level — The Strongbox. In-band UNION SQL injection in a **double-quoted** string
+"""Level 4 — The Strongbox. In-band UNION SQL injection in a **double-quoted** string
 context (a different breakout from the single-quote rooms) — so a tool has to detect
 the right quote, not assume one."""
 

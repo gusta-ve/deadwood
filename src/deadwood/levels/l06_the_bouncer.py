@@ -1,4 +1,4 @@
-"""Level 5 — The Bouncer. SQL injection authentication bypass."""
+"""Level 6 — The Bouncer. SQL injection authentication bypass."""
 
 from __future__ import annotations
 

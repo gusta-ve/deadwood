@@ -1,4 +1,4 @@
-"""Level — The Gauntlet. UNION SQL injection behind a keyword WAF: it strips single
+"""Level 10 — The Gauntlet. UNION SQL injection behind a keyword WAF: it strips single
 quotes and blocks the literal `UNION SELECT` — but only case-sensitively and only
 across real whitespace, so case-folding (`UnIoN SeLeCt`) or an inline comment
 (`UNION/**/SELECT`) walks straight through, and quote-free literals carry the data."""

@@ -1,4 +1,4 @@
-"""Level 9 — The Vault. Second-order SQL injection: input stored safely, then used
+"""Level 14 — The Vault. Second-order SQL injection: input stored safely, then used
 unsafely somewhere else entirely."""
 
 from __future__ import annotations

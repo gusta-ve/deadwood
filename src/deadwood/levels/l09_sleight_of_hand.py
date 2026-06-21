@@ -1,4 +1,4 @@
-"""Level 6 — Sleight of Hand. UNION SQL injection behind an input filter that
+"""Level 9 — Sleight of Hand. UNION SQL injection behind an input filter that
 strips quotes and blocks the schema catalog."""
 
 from __future__ import annotations

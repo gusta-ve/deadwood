@@ -1,4 +1,4 @@
-"""Level — The Watchman. Time-based blind SQL injection in a **parenthesised** string
+"""Level 8 — The Watchman. Time-based blind SQL injection in a **parenthesised** string
 context: the value lands inside a function call, `lower('<you>')`, so the breakout is
 `')` — not a bare quote. The page never changes; only the clock does. (The room that
 catches a time-based engine that only tries `'`/`\"` and never the paren breakout.)"""

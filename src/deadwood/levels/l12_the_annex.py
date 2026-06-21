@@ -1,4 +1,4 @@
-"""Level — The Annex. UNION SQL injection where the prize lives in a **second,
+"""Level 12 — The Annex. UNION SQL injection where the prize lives in a **second,
 ATTACHed database** (`archive`). The injectable query reads the main database; the
 flag isn't there. You have to enumerate the other database and qualify it
 (`archive.secrets`) — the cross-database reach a single-database walk misses."""
